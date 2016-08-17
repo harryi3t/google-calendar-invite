@@ -1,0 +1,33 @@
+{
+  "name": "google-calendar-invite",
+  "version": "1.0.0",
+  "description": "This is an excercise application for nextMail",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryi3t/google-calendar-invite.git"
+  },
+  "keywords": [
+    "googleCalendar",
+    "calendar",
+    "googleAPI"
+  ],
+  "author": "harryi3t",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/harryi3t/google-calendar-invite/issues"
+  },
+  "homepage": "https://github.com/harryi3t/google-calendar-invite",
+  "dependencies": {
+    "bower": "1.7.9"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "matchdep": "^1.0.1"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "google-calendar-invite",
+  "description": "This is an excercise application for nextMail",
+  "main": "server.js",
+  "authors": [
+    "harryi3t"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "googleCalendar",
+    "calendar",
+    "googleAPI"
+  ],
+  "homepage": "https://github.com/harryi3t/google-calendar-invite",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.3.15",
+    "angular-ui-router": "ui-router#^0.3.1",
+    "fullcalendar": "^2.9.1",
+    "moment": "^2.14.1"
+  }
+}
