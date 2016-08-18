@@ -7,18 +7,13 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'SRC_PA
   '$urlMatcherFactoryProvider',
   function ($stateProvider, $locationProvider, $urlRouterProvider, SRC_PATH,
     $urlMatcherFactoryProvider) {
-    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.otherwise('/');
     $urlMatcherFactoryProvider.strictMode(false);
     $stateProvider
-      .state('/login', {
-        url: '/login',
-        templateUrl: SRC_PATH + 'login/login.html',
-        controller: 'loginCtrl'
-      })
-      .state('/invite', {
-        url: '/invite',
-        templateUrl: SRC_PATH + 'invite/invite.html',
-        controller: 'inviteCtrl'
+      .state('/', {
+        url: '/',
+        templateUrl: SRC_PATH + 'home/home.html',
+        controller: 'homeCtrl'
       });
     //$locationProvider.html5Mode(true);
   }

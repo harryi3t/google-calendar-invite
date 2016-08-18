@@ -29,10 +29,25 @@ module.exports = function (grunt) {
       }
     },
 
+    concurrent: {
+      target: {
+        tasks: ['http-server', 'watch'],
+        options: {
+          logConcurrentOutput: true
+        }
+      }
+    },
+
+    'http-server': {
+      dev: {
+        port: 8080
+      }
+    }
+
   });
   require('matchdep').filter('grunt-*').forEach(grunt.loadNpmTasks);
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
   grunt.registerTask('build', ['concat']);
-  grunt.registerTask('local', ['build', 'watch']);
+  grunt.registerTask('local', ['build', 'concurrent']);
 };
