@@ -4,6 +4,8 @@
   www.controller('homeCtrl', ['$scope', homeCtrl]);
 
   function homeCtrl($scope) {
+    $scope.foo = {a:1};
+    var sc = $scope;
     var calendarEvents = [
       {
         title: 'demo-event',
@@ -12,6 +14,7 @@
         textColor: 'black'
       }
     ];
+    var menuWidth = 400;
 
     var CLIENT_ID = '307520883194-jbf6t1ic6lr2s7lsh9huu403cafqqkia.apps.googleusercontent.com';
     var SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
@@ -107,7 +110,19 @@
     $('#calendar').fullCalendar({
       eventSources: [{
         events: calendarEvents
-      }]
+      }],
+      dayClick: clickHandler.bind(null, $scope)
     });
+
+    function clickHandler ($scope, date, jsEvent) {
+      $scope.currentEventDate = 'no';
+      var left = jsEvent.pageX > menuWidth/2 ?
+        jsEvent.pageX - menuWidth/2 : jsEvent.pageX;
+      var top = jsEvent.pageY + 11;
+
+      $('#menu').css( 'top', top);
+      $('#menu').css( 'left', left);
+      $('#menu').show();
+    }
   }
 }());
