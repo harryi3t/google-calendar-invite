@@ -4,20 +4,13 @@
   www.controller('homeCtrl', ['$scope', homeCtrl]);
 
   function homeCtrl($scope) {
-    $scope.foo = {a:1};
-    var sc = $scope;
-    var calendarEvents = [
-      {
-        title: 'demo-event',
-        start: moment().format('YYYY-MM-DD'),
-        color: 'red',
-        textColor: 'black'
-      }
-    ];
+    $scope.isAuthorized = false;
+    $scope.loadedMonths = new Set();
+    var calendarEvents = [];
     var menuWidth = 400;
 
     var CLIENT_ID = '307520883194-jbf6t1ic6lr2s7lsh9huu403cafqqkia.apps.googleusercontent.com';
-    var SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
+    var SCOPES = ["https://www.googleapis.com/auth/calendar"];
 
     /**
      * Check if current user has authorized this application.
@@ -43,12 +36,15 @@
       if (authResult && !authResult.error) {
         // Hide auth UI, then load client library.
         authorizeDiv.style.display = 'none';
+        $scope.isAuthorized = true;
         $scope.loadCalendarApi();
       } else {
         // Show auth UI, allowing the user to initiate authorization by
         // clicking authorize button.
         authorizeDiv.style.display = 'inline';
+        $scope.isAuthorized = false;
       }
+      $scope.$apply();
     }
 
     /**
@@ -76,13 +72,30 @@
      * the authorized user's calendar. If no events are found an
      * appropriate message is printed.
      */
-    function listUpcomingEvents() {
+    function listUpcomingEvents(monthsPrev, monthsNext) {
+      var timeMin = monthsPrev || moment().startOf('month')
+        .add(0,'month').format();
+      var timeMax = monthsNext || moment().endOf('month')
+        .add(1,'month').format();
+
+      if ($scope.loadedMonths.has(timeMin)) {
+        console.info('skipping for ', timeMin);
+        return;
+      }
+
+      $scope.loadedMonths.add(timeMin);
+      if (!monthsNext) {
+        var nextMonthStartDate = moment().startOf('month')
+          .add(1,'month').format()
+        $scope.loadedMonths.add(nextMonthStartDate);
+      }
+
       var request = gapi.client.calendar.events.list({
         'calendarId': 'primary',
-        'timeMin': (new Date()).toISOString(),
+        'timeMin': timeMin,
+        'timeMax': timeMax,
         'showDeleted': false,
         'singleEvents': true,
-        'maxResults': 10,
         'orderBy': 'startTime'
       });
 
@@ -111,11 +124,17 @@
       eventSources: [{
         events: calendarEvents
       }],
+      height: 'auto',
+      header: {
+        left: 'prev next today',
+        center: 'title',
+        right: 'month basicWeek basicDay'
+      },
       dayClick: clickHandler.bind(null, $scope)
     });
 
     function clickHandler ($scope, date, jsEvent) {
-      $scope.currentEventDate = 'no';
+      $scope.currentEventDate = date;
       var left = jsEvent.pageX > menuWidth/2 ?
         jsEvent.pageX - menuWidth/2 : jsEvent.pageX;
       var top = jsEvent.pageY + 11;
@@ -124,5 +143,72 @@
       $('#menu').css( 'left', left);
       $('#menu').show();
     }
+
+    $scope.cancelInvite = function () {
+      $('#menu').hide();
+    };
+    $scope.sendInvite = function () {
+      var event = getEventObject();
+      var request = gapi.client.calendar.events.insert({
+        calendarId: 'primary',
+        resource: event,
+        sendNotifications: true,
+      });
+
+      request.execute(function(event) {
+        console.log(event);
+      });
+    };
+
+    $scope.isValidInvite = function () {
+      if (!$scope.summary) return false;
+      if (!$scope.email) return false;
+      if (!$scope.location) return false;
+      return true;
+    };
+
+    function getEventObject() {
+      return {
+        summary: $scope.summary,
+        location: $scope.location,
+        description: $scope.description,
+        timezone: 'local',
+        start: {
+          date: $scope.currentEventDate.format()
+        },
+        end: {
+          date: $scope.currentEventDate.format()
+        },
+        attendees: [
+          {email: $scope.email},
+        ],
+        reminders: {
+          useDefault: false,
+          overrides: [
+            {method: 'email', minutes: 24 * 60},
+            {method: 'popup', minutes: 10}
+          ]
+        }
+      };
+    }
+
+    $('.fc-next-button').click(loadCurrentMonthEvents);
+    $('.fc-prev-button').click(loadCurrentMonthEvents);
+
+    function loadCurrentMonthEvents() {
+      var curStartMonthDate =
+        moment($('#calendar').fullCalendar('getDate'))
+        .local()
+        .startOf('month')
+        .format();
+      var curEndMonthDate =
+        moment($('#calendar').fullCalendar('getDate'))
+        .local()
+        .endOf('month')
+        .format();
+
+      listUpcomingEvents(curStartMonthDate, curEndMonthDate);
+    }
+
   }
 }());

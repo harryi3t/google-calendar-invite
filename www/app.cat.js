@@ -25,20 +25,13 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'SRC_PA
   www.controller('homeCtrl', ['$scope', homeCtrl]);
 
   function homeCtrl($scope) {
-    $scope.foo = {a:1};
-    var sc = $scope;
-    var calendarEvents = [
-      {
-        title: 'demo-event',
-        start: moment().format('YYYY-MM-DD'),
-        color: 'red',
-        textColor: 'black'
-      }
-    ];
+    $scope.isAuthorized = false;
+    $scope.loadedMonths = new Set();
+    var calendarEvents = [];
     var menuWidth = 400;
 
     var CLIENT_ID = '307520883194-jbf6t1ic6lr2s7lsh9huu403cafqqkia.apps.googleusercontent.com';
-    var SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
+    var SCOPES = ["https://www.googleapis.com/auth/calendar"];
 
     /**
      * Check if current user has authorized this application.
@@ -64,12 +57,15 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'SRC_PA
       if (authResult && !authResult.error) {
         // Hide auth UI, then load client library.
         authorizeDiv.style.display = 'none';
+        $scope.isAuthorized = true;
         $scope.loadCalendarApi();
       } else {
         // Show auth UI, allowing the user to initiate authorization by
         // clicking authorize button.
         authorizeDiv.style.display = 'inline';
+        $scope.isAuthorized = false;
       }
+      $scope.$apply();
     }
 
     /**
@@ -97,13 +93,30 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'SRC_PA
      * the authorized user's calendar. If no events are found an
      * appropriate message is printed.
      */
-    function listUpcomingEvents() {
+    function listUpcomingEvents(monthsPrev, monthsNext) {
+      var timeMin = monthsPrev || moment().startOf('month')
+        .add(0,'month').format();
+      var timeMax = monthsNext || moment().endOf('month')
+        .add(1,'month').format();
+
+      if ($scope.loadedMonths.has(timeMin)) {
+        console.info('skipping for ', timeMin);
+        return;
+      }
+
+      $scope.loadedMonths.add(timeMin);
+      if (!monthsNext) {
+        var nextMonthStartDate = moment().startOf('month')
+          .add(1,'month').format()
+        $scope.loadedMonths.add(nextMonthStartDate);
+      }
+
       var request = gapi.client.calendar.events.list({
         'calendarId': 'primary',
-        'timeMin': (new Date()).toISOString(),
+        'timeMin': timeMin,
+        'timeMax': timeMax,
         'showDeleted': false,
         'singleEvents': true,
-        'maxResults': 10,
         'orderBy': 'startTime'
       });
 
@@ -132,11 +145,17 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'SRC_PA
       eventSources: [{
         events: calendarEvents
       }],
+      height: 'auto',
+      header: {
+        left: 'prev next today',
+        center: 'title',
+        right: 'month basicWeek basicDay'
+      },
       dayClick: clickHandler.bind(null, $scope)
     });
 
     function clickHandler ($scope, date, jsEvent) {
-      $scope.currentEventDate = 'no';
+      $scope.currentEventDate = date;
       var left = jsEvent.pageX > menuWidth/2 ?
         jsEvent.pageX - menuWidth/2 : jsEvent.pageX;
       var top = jsEvent.pageY + 11;
@@ -145,6 +164,73 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'SRC_PA
       $('#menu').css( 'left', left);
       $('#menu').show();
     }
+
+    $scope.cancelInvite = function () {
+      $('#menu').hide();
+    };
+    $scope.sendInvite = function () {
+      var event = getEventObject();
+      var request = gapi.client.calendar.events.insert({
+        calendarId: 'primary',
+        resource: event,
+        sendNotifications: true,
+      });
+
+      request.execute(function(event) {
+        console.log(event);
+      });
+    };
+
+    $scope.isValidInvite = function () {
+      if (!$scope.summary) return false;
+      if (!$scope.email) return false;
+      if (!$scope.location) return false;
+      return true;
+    };
+
+    function getEventObject() {
+      return {
+        summary: $scope.summary,
+        location: $scope.location,
+        description: $scope.description,
+        timezone: 'local',
+        start: {
+          date: $scope.currentEventDate.format()
+        },
+        end: {
+          date: $scope.currentEventDate.format()
+        },
+        attendees: [
+          {email: $scope.email},
+        ],
+        reminders: {
+          useDefault: false,
+          overrides: [
+            {method: 'email', minutes: 24 * 60},
+            {method: 'popup', minutes: 10}
+          ]
+        }
+      };
+    }
+
+    $('.fc-next-button').click(loadCurrentMonthEvents);
+    $('.fc-prev-button').click(loadCurrentMonthEvents);
+
+    function loadCurrentMonthEvents() {
+      var curStartMonthDate =
+        moment($('#calendar').fullCalendar('getDate'))
+        .local()
+        .startOf('month')
+        .format();
+      var curEndMonthDate =
+        moment($('#calendar').fullCalendar('getDate'))
+        .local()
+        .endOf('month')
+        .format();
+
+      listUpcomingEvents(curStartMonthDate, curEndMonthDate);
+    }
+
   }
 }());
 var gapi=window.gapi=window.gapi||{};gapi._bs=new Date().getTime();(function(){var f=window,h=document,m=f.location,n=function(){},u=/\[native code\]/,w=function(a,b,c){return a[b]=a[b]||c},A=function(a){for(var b=0;b<this.length;b++)if(this[b]===a)return b;return-1},B=function(a){a=a.sort();for(var b=[],c=void 0,d=0;d<a.length;d++){var e=a[d];e!=c&&b.push(e);c=e}return b},C=function(){var a;if((a=Object.create)&&u.test(a))a=a(null);else{a={};for(var b in a)a[b]=void 0}return a},D=w(f,"gapi",{});var E;E=w(f,"___jsl",C());w(E,"I",0);w(E,"hel",10);var F=function(){var a=m.href,b;if(E.dpo)b=E.h;else{b=E.h;var c=RegExp("([#].*&|[#])jsh=([^&#]*)","g"),d=RegExp("([?#].*&|[?#])jsh=([^&#]*)","g");if(a=a&&(c.exec(a)||d.exec(a)))try{b=decodeURIComponent(a[2])}catch(e){}}return b},G=function(a){var b=w(E,"PQ",[]);E.PQ=[];var c=b.length;if(0===c)a();else for(var d=0,e=function(){++d===c&&a()},g=0;g<c;g++)b[g](e)},H=function(a){return w(w(E,"H",C()),a,C())};var J=w(E,"perf",C()),K=w(J,"g",C()),aa=w(J,"i",C());w(J,"r",[]);C();C();var L=function(a,b,c){var d=J.r;"function"===typeof d?d(a,b,c):d.push([a,b,c])},N=function(a,b,c){b&&0<b.length&&(b=M(b),c&&0<c.length&&(b+="___"+M(c)),28<b.length&&(b=b.substr(0,28)+(b.length-28)),c=b,b=w(aa,"_p",C()),w(b,c,C())[a]=(new Date).getTime(),L(a,"_p",c))},M=function(a){return a.join("__").replace(/\./g,"_").replace(/\-/g,"_").replace(/\,/g,"_")};var O=C(),P=[],Q=function(a){throw Error("Bad hint"+(a?": "+a:""));};P.push(["jsl",function(a){for(var b in a)if(Object.prototype.hasOwnProperty.call(a,b)){var c=a[b];"object"==typeof c?E[b]=w(E,b,[]).concat(c):w(E,b,c)}if(b=a.u)a=w(E,"us",[]),a.push(b),(b=/^https:(.*)$/.exec(b))&&a.push("http:"+b[1])}]);var ba=/^(\/[a-zA-Z0-9_\-]+)+$/,ca=/^[a-zA-Z0-9\-_\.,!]+$/,da=/^gapi\.loaded_[0-9]+$/,ea=/^[a-zA-Z0-9,._-]+$/,ia=function(a,b,c,d){var e=a.split(";"),g=e.shift(),l=O[g],k=null;l?k=l(e,b,c,d):Q("no hint processor for: "+g);k||Q("failed to generate load url");b=k;c=b.match(fa);(d=b.match(ga))&&1===d.length&&ha.test(b)&&c&&1===c.length||Q("failed sanity: "+a);return k},ka=function(a,b,c,d){a=ja(a);da.test(c)||Q("invalid_callback");b=R(b);d=d&&d.length?R(d):null;var e=function(a){return encodeURIComponent(a).replace(/%2C/g,

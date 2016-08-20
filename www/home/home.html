@@ -1,62 +1,46 @@
-<style type="text/css">
-  #menu{
-    z-index: 1001;
-    width: 400px;
-    height: 250px;
-    border: 1px solid;
-    position: absolute;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,.2);
-    border: 1px solid #ccc;
-    -moz-box-shadow: 0 2px 4px rgba(0,0,0,.2);
-    -webkit-box-shadow: 0 2px 4px rgba(0,0,0,.2);
-    display: none;
-  }
-  #menu #content{
-    padding: 10px;
-  }
-  #menu>.triangle{
-    width: 0;
-    height: 0;
-    content: "";
-    margin-left: 190px;
-    position: absolute;
-  }
-  #menu>.triangle.dark{
-    border-left: 13px solid transparent;
-    border-right: 13px solid transparent;
-    border-bottom: 13px solid #ccc;
-    top: -13px;
-  }
-  #menu>.triangle.light{
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 12px solid #fff;
-    top: -11px;
-    left: 1px;
-  }
-  input[type="text"]{
-    color: #1b1b1b;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 3px;
-  }
-</style>
-<div id="authorize-div">
-  <span>Authorize access to Google Calendar API</span>
-  <!--Button for the user to click to initiate auth sequence -->
-  <button id="authorize-button" ng-click="handleAuthClick(event)">
-    Authorize
-  </button>
+<div class="container">
+  <div id="authorize-div" ng-hide="isAuthorized">
+    <button id="authorize-button" ng-click="handleAuthClick(event)"
+       class="button-primary">
+      Authorize access to Google Calendar API
+    </button>
+  </div>
+  <div id="calendar" ng-hide="!isAuthorized"></div>
 </div>
 
-<div id='calendar'></div>
 <div id="menu">
   <span class="triangle dark"></span>
   <span class="triangle light"></span>
-  <div id="content">
-    <center><h3>Add Event</h3></center>
-    Title: <input type="text" name="title" /> <br/>
-    When: {{currentEventDate}}
-  </div>
+  <form id="content">
+    <center><span class="menuHeading">Sent Invite</span></center>
+    <div class="row">
+      <label>Summary</label>
+      <input class="u-full-width" type="text" placeholder="Google I/O 2015"
+        ng-model="summary">
+    </div>
+    <div class="row">
+      <label>Email</label>
+      <input class="u-full-width" type="email" placeholder="name@mailbox.com"
+        ng-model="email">
+    </div>
+    <div class="row">
+      <label>Location</label>
+      <input class="u-full-width" type="text"
+        placeholder="800 Howard St., San Francisco, CA 94103"
+        ng-model="location">
+    </div>
+    <div class="row">
+      <label>Description</label>
+      <textarea class="u-full-width"
+        placeholder="A chance to hear more about Google\'s developer products."
+        ng-model="description"></textarea>
+    </div>
+    <div class="row">
+      <button class="button-primary"
+        ng-click="sendInvite()"
+        ng-disabled="!isValidInvite()">Send Invite</button>
+      <button class="button"
+        ng-click="cancelInvite()">Cancel</button>
+    </div>
+  </form>
 </div>
