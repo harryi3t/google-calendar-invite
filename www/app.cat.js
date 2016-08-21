@@ -164,6 +164,7 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider',
 
     function clickHandler ($scope, date, jsEvent) {
       $overlay.show();
+      $("input:text:first").focus();
 
       $scope.currentEventDate = date;
       var left = jsEvent.pageX > menuWidth/2 ?
@@ -189,6 +190,7 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider',
 
     $scope.cancelInvite = function () {
       $overlay.hide();
+      clearForm();
     };
     $scope.sendInvite = function () {
       var event = getEventObject();
@@ -259,6 +261,13 @@ www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider',
         .format();
 
       listUpcomingEvents(curStartMonthDate, curEndMonthDate);
+    }
+
+    function clearForm() {
+      $scope.summary = '';
+      $scope.location = '';
+      $scope.email = '';
+      $scope.description = '';
     }
 
   }
