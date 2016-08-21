@@ -32,6 +32,7 @@ module.exports = function (grunt) {
     concurrent: {
       target: {
         tasks: ['http-server', 'watch'],
+        root: 'www',
         options: {
           logConcurrentOutput: true
         }

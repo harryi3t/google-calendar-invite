@@ -1,18 +1,17 @@
 'use strict';
 
 var www = angular.module('www', ['ui.router']);
-www.constant('SRC_PATH', 'www/');
 
-www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'SRC_PATH',
+www.config(['$stateProvider', '$locationProvider', '$urlRouterProvider',
   '$urlMatcherFactoryProvider',
-  function ($stateProvider, $locationProvider, $urlRouterProvider, SRC_PATH,
+  function ($stateProvider, $locationProvider, $urlRouterProvider,
     $urlMatcherFactoryProvider) {
     $urlRouterProvider.otherwise('/');
     $urlMatcherFactoryProvider.strictMode(false);
     $stateProvider
       .state('/', {
         url: '/',
-        templateUrl: SRC_PATH + 'home/home.html',
+        templateUrl: 'home/home.html',
         controller: 'homeCtrl'
       });
     //$locationProvider.html5Mode(true);
