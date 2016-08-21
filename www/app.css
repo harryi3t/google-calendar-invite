@@ -1,6 +1,10 @@
+body{
+  background-color: #333;
+  color: #fff;
+}
 #overlay{
   background-color: rgba(0, 0, 0, 0.63);
-  width: 100%;
+  width: 99%;
   position: absolute;
   height: 100%;
   z-index: 100;
@@ -17,6 +21,7 @@
   border: 1px solid #ccc;
   -moz-box-shadow: 0 2px 4px rgba(0,0,0,.2);
   -webkit-box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  color: #222;
 }
 #menu #content{
   padding: 10px;
@@ -70,4 +75,18 @@ button:disabled, button:disabled:hover {
   color: #888;
   border: #333;
   cursor: not-allowed;
+}
+#authorize-div{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+  height:100%;
+  position: fixed;
+  left: 0px;
+  right: 0px;
+}
+#authorize-button{
+  font-size: 20px;
+  height: 100px;
 }
