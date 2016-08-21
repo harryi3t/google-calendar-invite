@@ -22,16 +22,15 @@
   },
   "homepage": "https://github.com/harryi3t/google-calendar-invite",
   "dependencies": {
-    "bower": "1.7.9",
-    "google-auth-library": "^0.9.8",
+    "google-auth-library": "0.9.8",
     "googleapis": "^12.3.0"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-concurrent": "^2.3.1",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-http-server": "^2.0.0",
+    "grunt-contrib-concat": "1.0.1",
+    "grunt-contrib-watch": "1.0.0",
+    "grunt-http-server": "2.0.0",
     "matchdep": "^1.0.1"
   }
 }
