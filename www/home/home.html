@@ -8,39 +8,47 @@
   <div id="calendar" ng-hide="!isAuthorized"></div>
 </div>
 
-<div id="menu">
-  <span class="triangle dark"></span>
-  <span class="triangle light"></span>
-  <form id="content">
-    <center><span class="menuHeading">Sent Invite</span></center>
-    <div class="row">
-      <label>Summary</label>
-      <input class="u-full-width" type="text" placeholder="Google I/O 2015"
-        ng-model="summary">
+<div id="overlay">
+  <div id="menu">
+    <div id="upperTriangle">
+      <span class="triangle up dark"></span>
+      <span class="triangle up light"></span>
     </div>
-    <div class="row">
-      <label>Email</label>
-      <input class="u-full-width" type="email" placeholder="name@mailbox.com"
-        ng-model="email">
+    <form id="content">
+      <center><span class="menuHeading">Insert &amp; Send Invite</span></center>
+      <div class="row">
+        <span class="menuLabel">Summary</span>
+        <input class="menuInput" type="text" placeholder="Google I/O 2015"
+          ng-model="summary">
+      </div>
+      <div class="row">
+        <span class="menuLabel">Email</span>
+        <input class="menuInput" type="email" placeholder="name@mailbox.com"
+          ng-model="email">
+      </div>
+      <div class="row">
+        <span class="menuLabel">Location</span>
+        <input class="menuInput" type="text"
+          placeholder="800 Howard St., San Francisco, CA 94103"
+          ng-model="location">
+      </div>
+      <div class="row">
+        <span class="menuLabel">Description</span>
+        <textarea class="u-full-width"
+          placeholder="A chance to hear more about Google\'s developer products."
+          ng-model="description"></textarea>
+      </div>
+      <div class="row">
+        <button class="button-primary"
+          ng-click="sendInvite()"
+          ng-disabled="!isValidInvite()">Send Invite</button>
+        <button class="button"
+          ng-click="cancelInvite()">Cancel</button>
+      </div>
+    </form>
+    <div id="lowerTriangle">
+      <span class="triangle down dark"></span>
+      <span class="triangle down light"></span>
     </div>
-    <div class="row">
-      <label>Location</label>
-      <input class="u-full-width" type="text"
-        placeholder="800 Howard St., San Francisco, CA 94103"
-        ng-model="location">
-    </div>
-    <div class="row">
-      <label>Description</label>
-      <textarea class="u-full-width"
-        placeholder="A chance to hear more about Google\'s developer products."
-        ng-model="description"></textarea>
-    </div>
-    <div class="row">
-      <button class="button-primary"
-        ng-click="sendInvite()"
-        ng-disabled="!isValidInvite()">Send Invite</button>
-      <button class="button"
-        ng-click="cancelInvite()">Cancel</button>
-    </div>
-  </form>
+  </div>
 </div>

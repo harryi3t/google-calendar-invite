@@ -126,26 +126,52 @@
       }],
       height: 'auto',
       header: {
-        left: 'prev next today',
+        left: '',
         center: 'title',
-        right: 'month basicWeek basicDay'
+        right: 'prev next today'
       },
       dayClick: clickHandler.bind(null, $scope)
     });
 
+    var $menu = $('#menu');
+    var $overlay = $('#overlay');
+    var $uTriangle = $('#upperTriangle');
+    var $lTriangle = $('#lowerTriangle');
+
+    $overlay.click(function hideOverlay() {
+      $overlay.hide();
+    });
+    $menu.click(function stopEventPropogation(event) {
+      event.stopPropagation();
+    });
+
     function clickHandler ($scope, date, jsEvent) {
+      $overlay.show();
+
       $scope.currentEventDate = date;
       var left = jsEvent.pageX > menuWidth/2 ?
         jsEvent.pageX - menuWidth/2 : jsEvent.pageX;
-      var top = jsEvent.pageY + 11;
+      var top = jsEvent.pageY;
 
-      $('#menu').css( 'top', top);
-      $('#menu').css( 'left', left);
-      $('#menu').show();
+      var windowHeight = window.innerHeight;
+      var menuHeight = $menu.height();
+      if (top/windowHeight > 0.5) {
+        top = top - menuHeight - 11;
+        $uTriangle.hide();
+        $lTriangle.show();
+      }
+      else {
+        top += 11;
+        $uTriangle.show();
+        $lTriangle.hide();
+      }
+
+      $menu.css('top', top);
+      $menu.css('left', left);
     }
 
     $scope.cancelInvite = function () {
-      $('#menu').hide();
+      $overlay.hide();
     };
     $scope.sendInvite = function () {
       var event = getEventObject();
@@ -157,6 +183,15 @@
 
       request.execute(function(event) {
         console.log(event);
+        if (!event.error) {
+          $menu.hide();
+          var eventToRender = {
+            title: event.summary,
+            start: event.start.date,
+            end: event.end.date
+          };
+          $('#calendar').fullCalendar('renderEvent', eventToRender, true);
+        }
       });
     };
 

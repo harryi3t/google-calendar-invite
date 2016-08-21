@@ -1,3 +1,12 @@
+#overlay{
+  background-color: rgba(0, 0, 0, 0.63);
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  z-index: 100;
+  top: 0px;
+  display: none;
+}
 #menu{
   z-index: 1001;
   width: 400px;
@@ -8,30 +17,47 @@
   border: 1px solid #ccc;
   -moz-box-shadow: 0 2px 4px rgba(0,0,0,.2);
   -webkit-box-shadow: 0 2px 4px rgba(0,0,0,.2);
-  display: none;
 }
 #menu #content{
   padding: 10px;
+  margin: 0px;
 }
-#menu>.triangle{
+#menu .triangle{
   width: 0;
   height: 0;
   content: "";
   margin-left: 190px;
   position: absolute;
 }
-#menu>.triangle.dark{
+#menu .triangle.light{
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  left: 1px;
+}
+#menu .triangle.dark{
   border-left: 13px solid transparent;
   border-right: 13px solid transparent;
+}
+.triangle.dark.up{
   border-bottom: 13px solid #ccc;
   top: -13px;
 }
-#menu>.triangle.light{
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
+.triangle.light.up{
   border-bottom: 12px solid #fff;
   top: -11px;
-  left: 1px;
+}
+.triangle.dark.down{
+  border-top: 13px solid #ccc;
+}
+.triangle.light.down{
+  border-top: 12px solid #fff;
+}
+#menu .menuInput{
+  float: right;
+  width: 300px
+}
+#menu .menuLabel{
+  font-weight: 600;
 }
 .fc-scroller{
   overflow-y: hidden !important;
