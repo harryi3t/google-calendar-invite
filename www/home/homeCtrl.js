@@ -179,9 +179,8 @@
       });
 
       request.execute(function(event) {
-        console.log(event);
         if (!event.error) {
-          $menu.hide();
+          $overlay.hide();
           var eventToRender = {
             title: event.summary,
             start: event.start.date,
